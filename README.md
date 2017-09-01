@@ -1,5 +1,7 @@
 ## session
 
+Easy and userful to gin(https://github.com/gin-gonic/gin)
+
 Main idea is from:  https://github.com/gin-contrib/sessions
 
 Compare with original:
@@ -7,6 +9,17 @@ Compare with original:
 * 1, codes are less than the original.
 * 2, use go-redis as redis client(https://github.com/go-redis/redis) which supports redis-cluster
 
+
+***
+## Usage
+
+Get codes  
+` $ go get github.com/miaomiao3/session`
+
+Import  
+`import ( "github.com/miaomiao3/session" )`
+
+***
 
 Examples
 
@@ -48,7 +61,7 @@ func main() {
 		session.Save()
 		c.JSON(200, gin.H{"count": count})
 	})
-	r.Run(":8092") // listen and serve on 0.0.0.0:8080
+	r.Run(":8092") // listen and serve on 0.0.0.0:8092
 }
 
 ```
@@ -92,7 +105,7 @@ func main() {
 		session.Save()
 		c.JSON(200, gin.H{"count": count})
 	})
-	r.Run(":8092") // listen and serve on 0.0.0.0:8080
+	r.Run(":8092") // listen and serve on 0.0.0.0:8092
 }
 
 ```
@@ -141,7 +154,7 @@ func main() {
 		session.Save()
 		c.JSON(200, gin.H{"count": count})
 	})
-	r.Run(":8092") // listen and serve on 0.0.0.0:8080
+	r.Run(":8092") // listen and serve on 0.0.0.0:8092
 }
 
 ```
