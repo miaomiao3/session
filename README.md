@@ -58,7 +58,6 @@ func main() {
 			count++
 		}
 		session.Set("count", count)
-		session.Save()
 		c.JSON(200, gin.H{"count": count})
 	})
 	r.Run(":8092") // listen and serve on 0.0.0.0:8092
@@ -102,7 +101,6 @@ func main() {
 			count++
 		}
 		session.Set("count", count)
-		session.Save()
 		c.JSON(200, gin.H{"count": count})
 	})
 	r.Run(":8092") // listen and serve on 0.0.0.0:8092
@@ -151,7 +149,6 @@ func main() {
 			count++
 		}
 		session.Set("count", count)
-		session.Save()
 		c.JSON(200, gin.H{"count": count})
 	})
 	r.Run(":8092") // listen and serve on 0.0.0.0:8092
