@@ -2,7 +2,7 @@ package sessions
 
 import (
 	"github.com/gorilla/sessions"
-	"quizio/session/redis"
+	"github.com/miaomiao3/session/redis"
 )
 
 type RedisStore interface {

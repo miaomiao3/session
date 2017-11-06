@@ -3,7 +3,7 @@ package sessions
 import (
 	"github.com/gorilla/sessions"
 	mgo "gopkg.in/mgo.v2"
-	"quizio/session/mongo"
+	"github.com/miaomiao3/session/mongo"
 )
 
 type MongoStore interface {
