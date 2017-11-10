@@ -32,14 +32,13 @@ type Options struct {
 	HttpOnly bool
 }
 
-
 type Session struct {
-	name    string
-	request *http.Request
-	store   Store
-	session *sessions.Session
-	valueChanged bool 		//flag to mark if value of session changed
-	writer  http.ResponseWriter
+	name         string
+	request      *http.Request
+	store        Store
+	session      *sessions.Session
+	valueChanged bool //flag to mark if value of session changed
+	writer       http.ResponseWriter
 }
 
 func (s *Session) Get(key interface{}) interface{} {
@@ -98,7 +97,6 @@ func (s *Session) Save() error {
 	return nil
 }
 
-
 // Session returns a session with a specified name
 func (s *Session) GetSession() *sessions.Session {
 	if s.session == nil {
@@ -110,7 +108,6 @@ func (s *Session) GetSession() *sessions.Session {
 	}
 	return s.session
 }
-
 
 // SessionMiddware is a middware function only available for gin framework
 func SessionMiddware(name string, store Store) gin.HandlerFunc {

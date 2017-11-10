@@ -19,7 +19,6 @@ import (
 // Amount of time for cookies/redis keys to expire.
 var sessionExpire = 86400 * 30
 
-
 // RediStore stores sessions in a redis backend.
 type RediStore struct {
 	Client        *redis.Client
@@ -48,11 +47,6 @@ func (s *RediStore) SetMaxLength(l int) {
 func (s *RediStore) SetKeyPrefix(p string) {
 	s.keyPrefix = p
 }
-
-//// SetSerializer sets the serializer
-//func (s *RediStore) SetSerializer(ss securecookie.Serializer) {
-//	s.serializer = ss
-//}
 
 // SetMaxAge restricts the maximum age, in seconds, of the session record
 // both in database and a browser. This is to change session storage configuration.
@@ -83,40 +77,39 @@ func NewRediStore(isCluster bool, size int, address []string, password string, k
 	var rs *RediStore
 	if isCluster {
 		if len(address) < 6 {
-			panic("cluster mode. redis cluster address error. count < 4")
+			panic("cluster mode. redis cluster address error. count < 6")
 		}
 		client := redis.NewClusterClient(&redis.ClusterOptions{
-			Addrs: address,
-			PoolSize:size,
-			DialTimeout:10 * time.Second,
-			Password:password,
+			Addrs:       address,
+			PoolSize:    size,
+			DialTimeout: 10 * time.Second,
+			Password:    password,
 		})
 
 		rs = &RediStore{
-			ClusterClient:   client,
-			Codecs: 	securecookie.CodecsFromPairs(keyPairs...),
-			Options: 	&sessions.Options{
+			ClusterClient: client,
+			Codecs:        securecookie.CodecsFromPairs(keyPairs...),
+			Options: &sessions.Options{
 				Path:   "/",
 				MaxAge: sessionExpire,
 			},
-			DefaultMaxAge: 	60 * 30, // 30 minutes seems like a reasonable default
-			maxLength:     	4096,
-			keyPrefix:     	"session_",
-			//serializer:    	securecookie.GobEncoder{},
-			IsCluster:	true,
+			DefaultMaxAge: 60 * 30, // 30 minutes seems like a reasonable default
+			maxLength:     4096,
+			keyPrefix:     "session_",
+			IsCluster:     true,
 		}
 	} else {
 		if len(address) > 1 {
 			panic("single mode. redis address error. count > 1")
 		}
 		client := redis.NewClient(&redis.Options{
-			Addr: address[0],
-			PoolSize:size,
-			DialTimeout:10 * time.Second,
-			Password:password,
+			Addr:        address[0],
+			PoolSize:    size,
+			DialTimeout: 10 * time.Second,
+			Password:    password,
 		})
 		rs = &RediStore{
-			Client:	client,
+			Client: client,
 			Codecs: securecookie.CodecsFromPairs(keyPairs...),
 			Options: &sessions.Options{
 				Path:   "/",
@@ -125,15 +118,13 @@ func NewRediStore(isCluster bool, size int, address []string, password string, k
 			DefaultMaxAge: 60 * 30, // 30 minutes seems like a reasonable default
 			maxLength:     4096,
 			keyPrefix:     "session_",
-			//serializer:    securecookie.GobEncoder{},
-			IsCluster:	false,
+			IsCluster:     false,
 		}
 	}
 
 	_, err := rs.ping()
 	return rs, err
 }
-
 
 // Close closes the underlying *redis.Pool
 func (s *RediStore) Close() error {
@@ -193,15 +184,14 @@ func (s *RediStore) Save(r *http.Request, w http.ResponseWriter, session *sessio
 	return nil
 }
 
-
 // ping does an internal ping against a server to check if it is alive.
 func (s *RediStore) ping() (bool, error) {
 	var data string
 	var err error
 
-	if s.IsCluster{
+	if s.IsCluster {
 		data, err = s.ClusterClient.Ping().Result()
-	}else{
+	} else {
 		data, err = s.Client.Ping().Result()
 	}
 
@@ -227,10 +217,10 @@ func (s *RediStore) save(session *sessions.Session) error {
 		age = s.DefaultMaxAge
 	}
 	// encode with secure cookie
-	if s.IsCluster{
-		_, err = s.ClusterClient.Set(s.keyPrefix + session.ID, encoded, time.Duration(age)*time.Second).Result()
-	}else{
-		_, err = s.Client.Set(s.keyPrefix + session.ID, encoded, time.Duration(age)*time.Second).Result()
+	if s.IsCluster {
+		_, err = s.ClusterClient.Set(s.keyPrefix+session.ID, encoded, time.Duration(age)*time.Second).Result()
+	} else {
+		_, err = s.Client.Set(s.keyPrefix+session.ID, encoded, time.Duration(age)*time.Second).Result()
 	}
 	return err
 }
@@ -240,10 +230,10 @@ func (s *RediStore) save(session *sessions.Session) error {
 func (s *RediStore) load(session *sessions.Session) error {
 	var err error
 	var data string
-	if s.IsCluster{
-		data, err  = s.ClusterClient.Get(s.keyPrefix + session.ID).Result()
-	}else{
-		data, err  = s.Client.Get(s.keyPrefix + session.ID).Result()
+	if s.IsCluster {
+		data, err = s.ClusterClient.Get(s.keyPrefix + session.ID).Result()
+	} else {
+		data, err = s.Client.Get(s.keyPrefix + session.ID).Result()
 	}
 	if data == "" {
 		return nil // no data was associated with this key
@@ -259,10 +249,10 @@ func (s *RediStore) load(session *sessions.Session) error {
 // delete removes keys from redis if MaxAge<0
 func (s *RediStore) delete(session *sessions.Session) error {
 	var err error
-	if s.IsCluster{
-		_, err  = s.ClusterClient.Del(s.keyPrefix + session.ID).Result()
-	}else{
-		_, err  = s.Client.Del(s.keyPrefix + session.ID).Result()
+	if s.IsCluster {
+		_, err = s.ClusterClient.Del(s.keyPrefix + session.ID).Result()
+	} else {
+		_, err = s.Client.Del(s.keyPrefix + session.ID).Result()
 	}
 
 	return err
