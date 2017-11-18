@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	DefaultKey  = "lemuse-session"
+	DefaultKey  = "m-session"
 	errorFormat = "[sessions] ERROR! %s\n"
 )
 
